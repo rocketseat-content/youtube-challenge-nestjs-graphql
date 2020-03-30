@@ -1,0 +1,8 @@
+back-end/data/*.db
+
+**/node_modules
+**/dist
+
+.env
+
+yarn-error.log

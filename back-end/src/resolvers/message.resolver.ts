@@ -6,12 +6,14 @@ import {
   Parent,
   ResolveField,
   Subscription,
+  Context,
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import RepoService from '../repo.service';
 import Message from '../db/models/message.entity';
 import MessageInput, { DeleteMessageInput } from './input/message.input';
 import User from '../db/models/user.entity';
+import { context } from 'src/db/loaders';
 
 export const pubSub = new PubSub();
 
@@ -78,7 +80,11 @@ export default class MessageResolver {
   }
 
   @ResolveField(() => User, { name: 'user' })
-  public async getUser(@Parent() parent: Message): Promise<User> {
-    return this.repoService.userRepo.findOne(parent.userId);
+  public async getUser(
+    @Parent() parent: Message,
+    @Context() { UserLoader }: typeof context,
+  ): Promise<User> {
+    return UserLoader.load(parent.userId); // With DataLoader
+    // return this.repoService.userRepo.findOne(parent.userId); // Without DataLoader
   }
 }

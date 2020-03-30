@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as ormOptions from './config/orm';
 import RepoModule from './repo.module';
 import UserResolver from './resolvers/user.resolver';
 import MessageResolver from './resolvers/message.resolver';
-import { GraphQLModule } from '@nestjs/graphql';
+import { context } from './db/loaders';
 
 const gqlImports = [UserResolver, MessageResolver];
 
@@ -19,6 +21,7 @@ const gqlImports = [UserResolver, MessageResolver];
       autoSchemaFile: 'schema.gql',
       playground: true,
       installSubscriptionHandlers: true,
+      context,
     }),
   ],
   controllers: [AppController],
